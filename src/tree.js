@@ -9,28 +9,35 @@ export class binaryTree {
     }
   }
 
-  print(){
+  print() {
     this.#prettyPrint(this.#rootnode);
   }
 
-  #prettyPrint(node, prefix = "", isLeft = true){
+  #prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null || node === undefined) {
       return;
     }
 
-    this.#prettyPrint(node.rightchild, `${prefix}${isLeft ? "│   " : "    "}`, false);
+    this.#prettyPrint(
+      node.rightchild,
+      `${prefix}${isLeft ? "│   " : "    "}`,
+      false,
+    );
     console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
-    this.#prettyPrint(node.leftchild, `${prefix}${isLeft ? "    " : "│   "}`, true);
+    this.#prettyPrint(
+      node.leftchild,
+      `${prefix}${isLeft ? "    " : "│   "}`,
+      true,
+    );
   }
 
-  getrootnode(){
+  getrootnode() {
     return this.#rootnode;
   }
 
   buildTree(arr, start, end) {
-
-    if(start > end){
-        return;
+    if (start > end) {
+      return;
     }
 
     let middle = start + Math.floor((end - start) / 2);
@@ -43,27 +50,18 @@ export class binaryTree {
     return root;
   }
 
-  binarySearch(value, node = this.#rootnode) {
-    if (this.#rootnode === null || this.#rootnode === undefined) {
+  binarySearch(value, node) {
+    if (this.#rootnode === null || this.#rootnode === undefined || !node) {
       return false;
     }
 
-    if (value > node.value) {
-      if (node.rightchild === null) {
-        return false;
-      } else {
-        this.binarySearch(value, node.rightchild);
-      }
-    }
+    if (value === node.value) return { result: true, node };
 
-    if (value < node.value) {
-      if (node.leftchild === null) {
-        return false;
-      } else {
-        this.binarySearch(value, node.leftchild);
-      }
+    if (value > node.value) {
+      return this.binarySearch(value, node.rightchild);
+    } else {
+      return this.binarySearch(value, node.leftchild);
     }
-    return { result: true, node };
   }
 
   insert(value, currentNode = this.#rootnode) {
@@ -73,18 +71,20 @@ export class binaryTree {
     }
 
     if (value > currentNode.value) {
-      if (currentNode.rightchild === null) {
+      if (!currentNode.rightchild) {
         currentNode.rightchild = new node(value);
+        return;
       } else {
-        this.insert(value, currentNode.rightchild);
+        return this.insert(value, currentNode.rightchild);
       }
     }
 
     if (value < currentNode.value) {
-      if (currentNode.leftchild === null) {
+      if (!currentNode.leftchild) {
         currentNode.leftchild = new node(value);
+        return;
       } else {
-        this.insert(value, currentNode.leftchild);
+        return this.insert(value, currentNode.leftchild);
       }
     }
     return;
@@ -93,25 +93,24 @@ export class binaryTree {
   //delete successor node and return the value
   successor(node) {
     let s;
-    if (node.rightchild !== null) {
+    if (node.rightchild) {
       s = node.rightchild;
     } else {
       return undefined;
     }
 
-    while (s !== null && s.leftchild !== null) {
+    while (s && s.leftchild) {
       s = s.leftchild;
     }
     return s;
   }
 
-
-  delete(value){
+  delete(value) {
     let search = this.binarySearch(value);
-    if(search.result){
-        let successor = this.successor(search.node);
-        search.node.value = successor.value;
-        this.delete(successor);
+    if (search.result) {
+      let successor = this.successor(search.node);
+      search.node.value = successor.value;
+      this.delete(successor);
     }
     return null;
   }
