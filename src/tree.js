@@ -1,4 +1,5 @@
 import { node } from "./node.js";
+import { Queue } from "./queue.js";
 
 export class binaryTree {
   #rootnode;
@@ -35,6 +36,10 @@ export class binaryTree {
     return this.#rootnode;
   }
 
+  setrootnode(node) {
+    this.#rootnode = node;
+  }
+
   buildTree(arr, start, end) {
     if (start > end) {
       return;
@@ -47,11 +52,14 @@ export class binaryTree {
     root.leftchild = this.buildTree(arr, start, middle - 1);
     root.rightchild = this.buildTree(arr, middle + 1, end);
 
+    if (root.leftchild) root.leftchild.parent = root;
+    if (root.rightchild) root.rightchild.parent = root;
+
     return root;
   }
 
   binarySearch(value, node) {
-    if (this.#rootnode === null || this.#rootnode === undefined || !node) {
+    if (!node || this.#rootnode === null || this.#rootnode === undefined) {
       return false;
     }
 
@@ -106,12 +114,88 @@ export class binaryTree {
   }
 
   delete(value) {
-    let search = this.binarySearch(value);
+    let search = this.binarySearch(value, this.#rootnode);
     if (search.result) {
-      let successor = this.successor(search.node);
-      search.node.value = successor.value;
-      this.delete(successor);
+      this.deleteOperations(search.node);
+      return true;
     }
-    return null;
+    return false;
+  }
+
+  deleteOperations(node) {
+    if (!node) return;
+
+    if (node.rightchild && node.leftchild) {
+      let s = this.successor(node);
+      node.value = s.value;
+      this.deleteOperations(s);
+      return;
+    }
+
+    if (!node.parent) {
+      if (!node.rightchild && !node.leftchild) {
+        this.#rootnode = null;
+        return;
+      }
+
+      if (node.rightchild) {
+        this.#rootnode = node.rightchild;
+      } else {
+        this.#rootnode = node.rightchild;
+      }
+      this.#rootnode.parent = null;
+      return;
+    }
+
+    const isrightchild = node.parent && node.parent.rightchild === node;
+
+    if (!node.rightchild && !node.leftchild) {
+      if (isrightchild) {
+        node.parent.rightchild = null;
+      } else {
+        node.parent.leftchild = null;
+      }
+      return;
+    }
+
+    let replacement = node.leftchild ? node.leftchild : node.rightchild;
+
+    if (replacement) replacement.parent = node.parent;
+
+    if (isrightchild) {
+      node.parent.rightchild = replacement;
+    } else {
+      node.parent.leftchild = replacement;
+    }
+    return;
+  }
+
+  levelOrderForEach(callback, node = this.#rootnode) {
+    if (typeof callback !== "function") {
+      console.error("The provided callback is not a function.");
+      throw new TypeError;
+    }
+
+    if (!node) return;
+    
+    let queue = new Queue();
+    
+    queue.enqueue(node);
+    
+    let currentNode;
+
+    while(!queue.isEmpty()){
+        currentNode = queue.dequeue();
+
+        if(currentNode.leftchild){
+            queue.enqueue(currentNode.leftchild);
+        }
+        if(currentNode.rightchild){
+            queue.enqueue(currentNode.rightchild);
+        }
+        callback(currentNode);
+        i++;
+    }
+    return queue.items;
   }
 }

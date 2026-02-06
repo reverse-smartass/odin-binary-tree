@@ -10,6 +10,7 @@ describe("binary tree", () => {
 
   test("search positive", () => {
     expect(tree.binarySearch(7, root).result).toStrictEqual(true);
+    expect(tree.binarySearch(7, root).node).toBe(root.rightchild)
   });
 
   test("search negative", () => {
@@ -17,7 +18,16 @@ describe("binary tree", () => {
   });
 
   test("successor", () => {
-    expect(tree.successor(root).value).toStrictEqual(6);
-    expect(tree.successor(root)).toStrictEqual(tree.binarySearch(6, root).node);
+    let successor = tree.successor(root);
+    expect(successor.value).toStrictEqual(6);
+    expect(successor).toStrictEqual(tree.binarySearch(6, root).node);
+    expect(successor).toStrictEqual(root.rightchild.leftchild);
+
   });
+
+  test("delete", () => {
+    
+    expect(tree.delete(6)).toStrictEqual(true);
+    
+  })
 });
