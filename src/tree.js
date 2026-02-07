@@ -3,6 +3,7 @@ import { Queue } from "./queue.js";
 
 export class binaryTree {
   #rootnode;
+  #treeValues = [];
 
   constructor(arr) {
     {
@@ -219,22 +220,41 @@ export class binaryTree {
   }
 
   isBalanced(node) {
-
-    if(!node){
-        return true;
+    if (!node) {
+      return true;
     }
 
     const right = this.isBalanced(node.leftchild);
     const left = this.isBalanced(node.rightchild);
 
-    console.log(right + " right " + node.value);
-    console.log(left + " left " + node.value);
+    //console.log(right + " right " + node.value);
+    //console.log(left + " left " + node.value);
 
     return (
       Math.abs(this.height(node.leftchild) - this.height(node.rightchild)) <=
         1 &&
-       right&&
+      right &&
       left
     );
+  }
+
+  getTreeValues(){
+    this.#treeValues = [];
+    this.inOrderForEach(this.#rootnode);
+    return this.#treeValues;
+  }
+
+  inOrderForEach(node) {
+    if(!node) return;
+
+    this.inOrderForEach(node.leftchild);
+    this.#treeValues.push(node.value);
+    console.log(node.value);
+    this.inOrderForEach(node.rightchild);    
+  }
+
+  rebalance(){
+    const data = this.getTreeValues();
+    this.#rootnode = this.buildTree(data, 0, data.length - 1);
   }
 }

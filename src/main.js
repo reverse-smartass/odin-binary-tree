@@ -20,3 +20,7 @@ tree.print();
 tree.delete(5);
 
 tree.print();
+
+tree.rebalance();
+
+tree.print();
