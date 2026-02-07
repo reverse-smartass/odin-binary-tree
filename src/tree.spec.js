@@ -28,11 +28,20 @@ describe("binary tree", () => {
     expect(tree.delete(6)).toStrictEqual(true);
   });
 
+  test("delete", () => {
+    expect(tree.insert(6)).toStrictEqual(true);
+  });
+
   test("depth", () => {
     expect(tree.depth(root.leftchild.rightchild.rightchild, root)).toStrictEqual(3);
   });
 
   test("height", () => {
-    expect(tree.height()).toStrictEqual(3);
+    expect(tree.height(root)).toStrictEqual(3);
+  });
+
+
+  test("isBalanced", () => {
+    expect(tree.isBalanced(root)).toStrictEqual(true);
   });
 });

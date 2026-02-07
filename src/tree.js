@@ -75,13 +75,13 @@ export class binaryTree {
   insert(value, currentNode = this.#rootnode) {
     if (this.#rootnode === null || this.#rootnode === undefined) {
       this.#rootnode = new node(value);
-      return;
+      return false;
     }
 
     if (value > currentNode.value) {
       if (!currentNode.rightchild) {
         currentNode.rightchild = new node(value);
-        return;
+        return true;
       } else {
         return this.insert(value, currentNode.rightchild);
       }
@@ -90,12 +90,12 @@ export class binaryTree {
     if (value < currentNode.value) {
       if (!currentNode.leftchild) {
         currentNode.leftchild = new node(value);
-        return;
+        return true;
       } else {
         return this.insert(value, currentNode.leftchild);
       }
     }
-    return;
+    return false;
   }
 
   //delete successor node and return the value
@@ -173,74 +173,68 @@ export class binaryTree {
   levelOrderForEach(callback, node = this.#rootnode) {
     if (typeof callback !== "function") {
       console.error("The provided callback is not a function.");
-      throw new TypeError;
+      throw new TypeError();
     }
 
     if (!node) return;
-    
+
     let queue = new Queue();
-    
+
     queue.enqueue(node);
-    
+
     let currentNode;
 
-    while(!queue.isEmpty()){
-        currentNode = queue.dequeue();
+    while (!queue.isEmpty()) {
+      currentNode = queue.dequeue();
 
-        if(currentNode.leftchild){
-            queue.enqueue(currentNode.leftchild);
-        }
-        if(currentNode.rightchild){
-            queue.enqueue(currentNode.rightchild);
-        }
-        callback(currentNode);
-        i++;
+      if (currentNode.leftchild) {
+        queue.enqueue(currentNode.leftchild);
+      }
+      if (currentNode.rightchild) {
+        queue.enqueue(currentNode.rightchild);
+      }
+      callback(currentNode);
+      i++;
     }
     return queue.items;
   }
 
-  height(node = this.#rootnode) {
-    if (!node) return;
-    
-    let queue = new Queue();
-    
-    queue.enqueue(node);
-    
-    let currentNode;
+  height(node) {
+    if (!node) return -1;
 
-    let h = -Infinity;
+    const leftHeight = this.height(node.leftchild);
+    const rightHeight = this.height(node.rightchild);
 
-    let n;
-
-    while(!queue.isEmpty()){
-        currentNode = queue.dequeue();
-
-        if(currentNode.leftchild){
-            queue.enqueue(currentNode.leftchild);
-        }
-        if(currentNode.rightchild){
-            queue.enqueue(currentNode.rightchild);
-        }
-        console.log(currentNode.value+ " " + currentNode.isLeaf());
-        if(currentNode.isLeaf()){
-            n = this.depth(currentNode, node);
-            if(n > h){
-                h = n;
-            }
-        }
-
-    }
-    return h;
+    return Math.max(leftHeight, rightHeight) + 1;
   }
 
-  depth(childnode, parentnode){
-
+  depth(childnode, parentnode) {
     let d = 0;
     let n = childnode;
-    while(n !== parentnode){
-        n = n.parent;
-        d++;
+    while (n !== parentnode) {
+      n = n.parent;
+      d++;
     }
-    return d;
+    return n === null ? -1 : d;
+  }
+
+  isBalanced(node) {
+
+    if(!node){
+        return true;
+    }
+
+    const right = this.isBalanced(node.leftchild);
+    const left = this.isBalanced(node.rightchild);
+
+    console.log(right + " right " + node.value);
+    console.log(left + " left " + node.value);
+
+    return (
+      Math.abs(this.height(node.leftchild) - this.height(node.rightchild)) <=
+        1 &&
+       right&&
+      left
+    );
   }
 }
