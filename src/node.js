@@ -7,6 +7,6 @@ export class node {
   }
 
   isLeaf() {
-    return this.rightchild === null && this.leftchild === null;
+    return this.rightchild == null && this.leftchild == null ;
   }
 }

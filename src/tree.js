@@ -198,4 +198,49 @@ export class binaryTree {
     }
     return queue.items;
   }
+
+  height(node = this.#rootnode) {
+    if (!node) return;
+    
+    let queue = new Queue();
+    
+    queue.enqueue(node);
+    
+    let currentNode;
+
+    let h = -Infinity;
+
+    let n;
+
+    while(!queue.isEmpty()){
+        currentNode = queue.dequeue();
+
+        if(currentNode.leftchild){
+            queue.enqueue(currentNode.leftchild);
+        }
+        if(currentNode.rightchild){
+            queue.enqueue(currentNode.rightchild);
+        }
+        console.log(currentNode.value+ " " + currentNode.isLeaf());
+        if(currentNode.isLeaf()){
+            n = this.depth(currentNode, node);
+            if(n > h){
+                h = n;
+            }
+        }
+
+    }
+    return h;
+  }
+
+  depth(childnode, parentnode){
+
+    let d = 0;
+    let n = childnode;
+    while(n !== parentnode){
+        n = n.parent;
+        d++;
+    }
+    return d;
+  }
 }
